@@ -1,5 +1,5 @@
 from island import Island
-
+import random
 
 class Animal:
     NOT_FOUND = 0
@@ -35,7 +35,7 @@ class Animal:
 
         offset = [(-1, 1), (0, 1), (1, 1), (-1, 0), (1, 0), (-1, -1), (0, -1), (1, -1)]
         result = Animal.NOT_FOUND
-
+        random.shuffle(offset)
         for dx, dy in offset:
             x = self._x + dx
             y = self._y + dy
@@ -45,6 +45,7 @@ class Animal:
                     result = (x, y)
                     break  # Quit immediately if a location is found
         return result
+
 
     def clock_tick(self):
         self._breed_clock -= 1
@@ -71,15 +72,22 @@ class Animal:
         If there is room in one of the neigboring locations,
         place the new animal there.
         """
+        breed_attempts = 2
+        for x in range(breed_attempts):
+            if self._breed_clock <= 0:
+                location = self._check_grid_for_neighbor(type(Island.UNOCCUPIED))
+                if location != Animal.NOT_FOUND:
+                    the_class = self.__class__
+                    # Reset the breed clock
+                    self._breed_clock = (
+                        the_class.breed_time
+                    )  # breed_time is a class variable
+                    # Create an instance of a new animal
+                    new_animal = the_class(self._island, x=location[0], y=location[1])
+                    self._island.register(new_animal)
+                    if self.__name == 'X':
+                        return
+                else:
+                    return
 
-        if self._breed_clock <= 0:
-            location = self._check_grid_for_neighbor(type(Island.UNOCCUPIED))
-            if location != Animal.NOT_FOUND:
-                the_class = self.__class__
-                # Reset the breed clock
-                self._breed_clock = (
-                    the_class.breed_time
-                )  # breed_time is a class variable
-                # Create an instance of a new animal
-                new_animal = the_class(self._island, x=location[0], y=location[1])
-                self._island.register(new_animal)
+
