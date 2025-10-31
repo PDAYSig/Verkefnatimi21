@@ -66,3 +66,4 @@ def put_animals_at_random(island, animal_type, animal_count):
 if __name__ == "__main__":
     # main(initial_predators=2, initial_prey=5, ticks=3, size=5)
     main()
+
